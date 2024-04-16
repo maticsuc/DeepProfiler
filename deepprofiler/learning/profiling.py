@@ -86,6 +86,10 @@ class Profile(object):
         
         # Extract features
         crops = next(self.profile_crop_generator.generate(tf.compat.v1.keras.backend.get_session()))[0]  # single image crop generator yields one batch
+        
+        # Ablation study - Replace nan values with 0 - otherwise features result all in nan values
+        crops = np.nan_to_num(crops)
+        
         feats = self.feat_extractor.predict(crops, batch_size=batch_size)
         
         while len(feats.shape) > 2:  # 2D mean spatial pooling

@@ -7,6 +7,8 @@ import comet_ml
 import numpy as np
 import tensorflow as tf
 
+from tensorflow.keras.callbacks import TensorBoard
+
 import deepprofiler.dataset.utils
 import deepprofiler.imaging.cropping
 import deepprofiler.learning.validation
@@ -79,12 +81,15 @@ class DeepProfilerModel(abc.ABC):
         # Create callbacks
         callbacks = setup_callbacks(self, schedule_epochs, schedule_lr, self.dset, experiment)
 
+        # Define a TensorBoard callback
+        tensorboard_callback = TensorBoard(log_dir="tensorboard_log_dir", histogram_freq=1)
+
         # Train model
         self.feature_model.fit(
             self.train_crop_generator.generator(main_session),
             steps_per_epoch=steps,
             epochs=epochs,
-            callbacks=callbacks,
+            callbacks=[callbacks, tensorboard_callback],
             verbose=1,
             initial_epoch=epoch - 1,
             validation_data=self.val_crop_generator.generate(main_session),

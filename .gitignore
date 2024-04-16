@@ -95,3 +95,12 @@ ENV/
 .ropeproject
 
 .idea
+
+# VSCode
+.vscode
+
+# Datasets + Experiments
+bbbc022
+project
+example_data
+commands.txt
