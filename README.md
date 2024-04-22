@@ -124,3 +124,15 @@ If you are interested in training a model on your images, please follow the [ins
 documentation handbook](https://cytomining.github.io/DeepProfiler-handbook/docs/07-train.html). 
 
 **Happy profiling!**
+
+## Custom contributions
+
+### Custom image per channel
+
+To replace all channel images in dataset with a custom image add ```custom_image_per_channel``` dictionary to ```dataset/images``` in configuration file. For each ```channel``` add name of the custom image to be used. Place the custom images in ```project/inputs/images/``` folder. Example:
+```
+"custom_image_per_channel": {
+  "DNA": "DNA_mean.tif",
+  "RNA": "RNA_mean.tif"
+}
+```

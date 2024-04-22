@@ -202,6 +202,14 @@ class ImageDataset():
 def read_dataset(config, mode = 'train'):
     # Read metadata and split dataset in training and validation
     metadata = deepprofiler.dataset.metadata.Metadata(config["paths"]["index"], dtype=None)
+
+    if "custom_image_per_channel" in config["dataset"]["images"]:
+        for k, v in config["dataset"]["images"]["custom_image_per_channel"].items():
+            if k in metadata.data.columns:
+                metadata.data[k] = v
+            else:
+                raise ValueError(f"'{k}' not in list of image channels used for profiling.")
+
     if config["prepare"]["compression"]["implement"]:
         metadata.data.replace({'.tiff': '.png', '.tif': '.png'}, inplace=True, regex=True)
 
