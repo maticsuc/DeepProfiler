@@ -136,3 +136,18 @@ To replace all channel images in dataset with a custom image add ```custom_image
   "RNA": "RNA_mean.tif"
 }
 ```
+
+### Process features
+
+Add `process_features` to `profile` section in configuration file with supported `mode` (default `site_level`). Example:
+
+```
+"profile": {
+  "feature_layer": "block6a_activation",
+  "checkpoint": "Cell_Painting_CNN_v1.hdf5",
+  "batch_size": 32,
+  "process_features": "site_well"
+}
+```
+
+- `site_level` mode: folder `features_processed` is created with channel site and well level features in csv format.

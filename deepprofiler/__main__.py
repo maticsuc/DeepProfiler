@@ -194,6 +194,12 @@ def profile(context, part):
     dset = deepprofiler.dataset.image_dataset.read_dataset(context.obj["config"], mode='profile')
     deepprofiler.learning.profiling.profile(context.obj["config"], dset)
 
+    # Process features
+    if "process_features" in context.parent.obj["config"]["profile"]:
+        print(f"Processing features: {context.parent.obj['config']['profile']['process_features']} mode")
+        deepprofiler.learning.profiling.process_features(context.obj["config"], dset)
+        print("Processing features: Done")
+
 
 # Auxiliary tool: Split index in multiple parts
 @cli.command(help='split metadata into multiple parts')
