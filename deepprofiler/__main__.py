@@ -48,8 +48,11 @@ import deepprofiler.learning.profiling
 @click.option("--logging", default=None,
               help="Path to file with comet.ml API key (filename in project_root/inputs/config/)",
               type=click.STRING)
+@click.option("--seed", default=None,
+              help="Random fixed seed.",
+              type=click.INT)
 @click.pass_context
-def cli(context, root, config, exp, cores, gpu, single_cells, metadata, logging):
+def cli(context, root, config, exp, cores, gpu, single_cells, metadata, logging, seed):
     dirs = {
         "root": root,
         "locations": root + "/inputs/locations/",  # TODO: use os.path.join()
@@ -72,6 +75,7 @@ def cli(context, root, config, exp, cores, gpu, single_cells, metadata, logging)
     config = dirs["config"] + "/" + config
     context.obj["cores"] = cores
     context.obj["gpu"] = gpu
+    context.obj["seed"] = seed
     os.environ["CUDA_VISIBLE_DEVICES"] = gpu
     # Load configuration file
     if config is not None and os.path.isfile(config):
@@ -185,6 +189,13 @@ def traintf2(context, epoch):
               default=-1,
               type=click.INT)
 def profile(context, part):
+    
+    # Fixed seed
+    if context.obj["seed"] is not None:
+        context.obj["config"]["seed"] = context.obj["seed"]
+        deepprofiler.dataset.utils.set_seed(seed=context.obj["seed"])
+        print(f"__main__.py: Fixed seed to {context.obj['seed']}.")
+
     if context.parent.obj["config"]["prepare"]["compression"]["implement"]:
         context.parent.obj["config"]["paths"]["images"] = context.obj["config"]["paths"]["compressed_images"]
     config = context.obj["config"]

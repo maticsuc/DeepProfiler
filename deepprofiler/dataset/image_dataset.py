@@ -200,13 +200,21 @@ class ImageDataset():
         self.targets.append(new_target)
 
 def read_dataset(config, mode = 'train'):
+
+    # Fixed seed
+    if "seed" in config:
+        deepprofiler.dataset.utils.set_seed(seed=config["seed"])
+        print(f"image_dataset.py: Fixed seed to {config['seed']}.")
+
     # Read metadata and split dataset in training and validation
     metadata = deepprofiler.dataset.metadata.Metadata(config["paths"]["index"], dtype=None)
 
     if "custom_image_per_channel" in config["dataset"]["images"]:
+        print("Custom image(s) used.")
         for k, v in config["dataset"]["images"]["custom_image_per_channel"].items():
             if k in metadata.data.columns:
                 metadata.data[k] = v
+                print(f"Image {v} used for channel {k}.")
             else:
                 raise ValueError(f"'{k}' not in list of image channels used for profiling.")
 

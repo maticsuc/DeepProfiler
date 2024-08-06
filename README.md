@@ -127,6 +127,10 @@ documentation handbook](https://cytomining.github.io/DeepProfiler-handbook/docs/
 
 ## Custom contributions
 
+### Fixed random seed
+
+To fix random seed add parameter `--seed`. Currently supported only for **profiling** mode.
+
 ### Custom image per channel
 
 To replace all channel images in dataset with a custom image add ```custom_image_per_channel``` dictionary to ```dataset/images``` in configuration file. For each ```channel``` add name of the custom image to be used. Place the custom images in ```project/inputs/images/``` folder. Example:
@@ -139,15 +143,23 @@ To replace all channel images in dataset with a custom image add ```custom_image
 
 ### Process features
 
-Add `process_features` to `profile` section in configuration file with supported `mode` (default `site_level`). Example:
+- Add `process_features` to `profile` section in configuration file with supported `dataset` (`BBBC022`, `BBBC037`).
+- Add `moa_metadata` to `dataset/metadata` section in configuration file to link the MoA matches csv file located in `root/inputs/metadata` folder.
+- After profiling *downstream analysis* is performed and `experiment_well.csv` and `experiment_matrix.csv` are stored in `experiment`'s folder.
+
+#### Example:
 
 ```
+"dataset": {
+  "metadata": {
+    "label_field": "pert_name",
+    "control_value": "EMPTY_",
+    "moa_metadata": "TAORF_MOA_MATCHES_official.csv"
+  }
 "profile": {
   "feature_layer": "block6a_activation",
   "checkpoint": "Cell_Painting_CNN_v1.hdf5",
   "batch_size": 32,
-  "process_features": "site_well"
+  "process_features": "BBBC022"
 }
 ```
-
-- `site_level` mode: folder `features_processed` is created with channel site and well level features in csv format.

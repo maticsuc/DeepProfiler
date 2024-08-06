@@ -40,7 +40,7 @@ class Metadata():
                 self.loadMultiple(filename, delimiter, dtype)
 
     def loadSingle(self, filename, delim, dtype):
-        print("Reading metadata form", filename)
+        print("Reading metadata from", filename)
         delimiter = parse_delimiter(delim)
         # Read csv files as strings without dropping NA symbols
         self.data = pd.read_csv(filename, delimiter, dtype=dtype, keep_default_na=False)
