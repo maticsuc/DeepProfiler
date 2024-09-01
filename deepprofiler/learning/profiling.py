@@ -144,6 +144,9 @@ def process_features(config, dset):
     meta = dset.meta.data
     dataset = config['profile']['process_features']
 
+    if dataset == 'BBBC022':
+        meta["broad_sample"] = meta["Treatment"].str.split("@", expand=True)[0]
+
     # Single cell
     features = deepprofiler.learning.feature_processing.single_cell(config, meta)
         
