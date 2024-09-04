@@ -146,6 +146,7 @@ To replace all channel images in dataset with a custom image add ```custom_image
 - Add `process_features` to `profile` section in configuration file with supported `dataset` (`BBBC022`, `BBBC037`).
 - Add `moa_metadata` to `dataset/metadata` section in configuration file to link the MoA matches csv file located in `root/inputs/metadata` folder.
 - After profiling *downstream analysis* is performed and `experiment_well.csv` and `experiment_matrix.csv` are stored in `experiment`'s folder.
+- Add `reg_param` to `profile` to directly regulate sphering regularization parameter in *downstream analysis*. (Different for each datasets)
 
 #### Example:
 
@@ -160,6 +161,7 @@ To replace all channel images in dataset with a custom image add ```custom_image
   "feature_layer": "block6a_activation",
   "checkpoint": "Cell_Painting_CNN_v1.hdf5",
   "batch_size": 32,
-  "process_features": "BBBC022"
+  "process_features": "BBBC022",
+  "reg_param": 0.0001
 }
 ```

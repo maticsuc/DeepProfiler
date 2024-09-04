@@ -6,8 +6,6 @@ from os.path import join
 from argparse import ArgumentParser
 from sklearn.metrics.pairwise import cosine_similarity
 
-REG_PARAM = 1e-2
-
 columns1 = ["Plate", "Well", "Treatment", "Replicate", "broad_sample"]
 columns2 = [str(i) for i in range(672)]
 
@@ -127,7 +125,7 @@ def well_level(meta, config, sites):
     return wells
 
 def sphering(config, wells):
-    whN = WhiteningNormalizer(wells.loc[wells["Treatment"] == config['dataset']['metadata']['control_value'], columns2], reg_param=REG_PARAM)
+    whN = WhiteningNormalizer(wells.loc[wells["Treatment"] == config['dataset']['metadata']['control_value'], columns2], reg_param=config['profile']['reg_param'])
     whD = whN.normalize(wells[columns2])
     wells[columns2] = whD
     wells.to_csv(join(config["paths"]["results"], f"{config['experiment_name']}_well.csv"), index=False)
