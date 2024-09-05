@@ -7,7 +7,6 @@ from argparse import ArgumentParser
 from sklearn.metrics.pairwise import cosine_similarity
 
 columns1 = ["Plate", "Well", "Treatment", "Replicate", "broad_sample"]
-columns2 = [str(i) for i in range(672)]
 
 class WhiteningNormalizer(object):
     def __init__(self, controls, reg_param=1e-6):
@@ -75,6 +74,7 @@ def single_cell(config, meta):
 def site_level(meta, features, dataset):
     site_level_data = []
     site_level_features = []
+    columns2 = [str(i) for i in range(features[0].shape[1])]
 
     if dataset == 'BBBC037':
         pert_col_name = 'pert_name'
@@ -119,12 +119,13 @@ def well_level(meta, config, sites):
     wells = sites.groupby(["Plate", "Well", "Treatment"]).mean(numeric_only=True).reset_index()
     tmp = meta.groupby(["Metadata_Plate", "Metadata_Well", config['dataset']['metadata']['label_field'], "broad_sample"])["DNA"].count().reset_index()
     wells = pd.merge(wells, tmp, how="left", left_on=["Plate", "Well", "Treatment"], right_on=["Metadata_Plate", "Metadata_Well", config['dataset']['metadata']['label_field']])
-    wells = wells[columns1 + columns2]
+    wells = wells[columns1 + list(sites.columns[len(columns1):])]
     print("Processed well-level data.")
 
     return wells
 
 def sphering(config, wells):
+    columns2 = list(wells.columns[len(columns1):])
     whN = WhiteningNormalizer(wells.loc[wells["Treatment"] == config['dataset']['metadata']['control_value'], columns2], reg_param=config['profile']['reg_param'])
     whD = whN.normalize(wells[columns2])
     wells[columns2] = whD
@@ -134,6 +135,7 @@ def sphering(config, wells):
     return wells
 
 def treatment_level(config, wells):
+    columns2 = list(wells.columns[len(columns1):])
     profiles = wells.groupby("Treatment").mean(numeric_only=True).reset_index()
     tmp = wells.groupby(["Treatment", "broad_sample"])["Replicate"].count().reset_index()
     profiles = pd.merge(profiles.reset_index(), tmp, on="Treatment", how="left")
@@ -145,6 +147,7 @@ def treatment_level(config, wells):
     return profiles
 
 def similarity_matrix(config, profiles):
+    columns2 = list(profiles.columns[3:])
     COS = cosine_similarity(profiles[columns2], profiles[columns2])
     df = pd.DataFrame(data=COS, index=list(profiles.broad_sample), columns=list(profiles.broad_sample))
     df = df.reset_index().melt(id_vars=["index"])
