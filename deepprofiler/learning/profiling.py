@@ -44,10 +44,13 @@ class Profile(object):
             checkpoint = self.config["paths"]["checkpoints"]+"/"+self.config["profile"]["checkpoint"]
             try:
                 self.dpmodel.feature_model.load_weights(checkpoint)
-            except ValueError:
+            except tf.errors.InvalidArgumentError as e:
                 print("Loading weights without classifier (different number of classes)")
                 self.dpmodel.feature_model.layers[-1]._name = "classifier"
                 self.dpmodel.feature_model.load_weights(checkpoint, by_name=True)
+            except Exception as e:
+                print("An unexpected error occurred while loading weights.")
+                print(f"Details: {e}")
 
         self.dpmodel.feature_model.summary()
         self.feat_extractor = tf.compat.v1.keras.Model(
